@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Online Courses Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23667eea" width="1200" height="600"/><circle fill="%23ff6b6b" opacity="0.3" cx="300" cy="200" r="150"/><circle fill="%23764ba2" opacity="0.2" cx="900" cy="400" r="200"/></svg>');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 150px 2rem 100px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        /* Courses Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .course-image {
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .course-content {
+            padding: 1.5rem;
+        }
+
+        .course-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .course-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin: 1rem 0;
+        }
+
+        /* Course Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            max-width: 800px;
+            border-radius: 15px;
+            overflow: hidden;
+            max-height: 90vh;
+            transform: scale(0.8);
+            animation: modalSlideIn 0.3s ease forwards;
+        }
+
+        @keyframes modalSlideIn {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .user-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .user-course {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .auth-buttons {
+                display: none;
+            }
+
+            nav {
+                padding: 0 1rem;
+            }
+
+            .hero {
+                padding: 120px 1rem 60px;
+            }
+        }
+
+        /* Utilities */
+        .text-center { text-align: center; }
+        .mb-3 { margin-bottom: 3rem; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">LearnHub</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#courses">Courses</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-secondary" onclick="showLogin()">Login</a>
+                <a href="#" class="btn btn-primary" onclick="showRegister()">Sign Up</a>
+            </div>
+            <div class="mobile-menu" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Master New Skills with Expert-Led Courses</h1>
+            <p>Learn from industry professionals at your own pace. Join thousands of students who have transformed their careers with our comprehensive online courses.</p>
+            <a href="#courses" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2.5rem;">Start Learning Now</a>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses" class="dashboard hidden">
+        <div class="container">
+            <h2>My Dashboard</h2>
+            <div class="user-courses" id="userCourses">
+                <!-- Purchased courses will appear here -->
+            </div>
+        </div>
+    </section>
+
+    <section id="courses-list">
+        <div class="container">
+            <h2 class="text-center">Featured Courses</h2>
+            <div class="courses-grid" id="coursesGrid">
+                <!-- Courses will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="text-center">Get In Touch</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">Send Message</button>
+            </form>
+            <div style="text-align: center; margin-top: 2rem;">
+                <p>Or contact us directly:</p>
+                <a href="https://wa.me/1234567890" class="btn btn-primary" style="margin: 0.5rem;">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Detail Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalCourseTitle"></h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div style="padding: 2rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <img id="modalCourseImage" src="" alt="" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">
+                    </div>
+                    <div>
+                        <p id="modalCoursePrice" style="font-size: 2rem; font-weight: bold; color: #ff6b6b; margin-bottom: 1rem;"></p>
+                        <p id="modalInstructor"></p>
+                    </div>
+                </div>
+                <div id="modalCourseDescription" style="margin-bottom: 2rem; line-height: 1.8;"></div>
+                <div id="modalCourseLessons" style="margin-bottom: 2rem;"></div>
+                <button class="btn btn-primary" style="width: 100%; font-size: 1.2rem;" onclick="purchaseCourse()">
+                    <i class="fas fa-shopping-cart"></i> Buy Now - $<span id="modalPriceValue"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modals -->
+    <div id="authModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 id="authModalTitle">Login</h2>
+                <span class="close" onclick="closeAuthModal()">&times;</span>
+            </div>
+            <div style="padding: 2rem;">
+                <form id="authForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="authEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="authPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem;">
+                    <a href="#" onclick="toggleAuthMode()">Need an account? Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample courses data
+        const courses = [
+            {
+                id: 1,
+                title: "Complete Web Development Bootcamp",
+                price: 49,
+                instructor: "John Doe",
+                description: "Master HTML, CSS, JavaScript, React, Node.js and more. Build 20+ real-world projects and become a full-stack developer.",
+                lessons: ["HTML & CSS Fundamentals", "JavaScript ES6+", "React & Redux", "Node.js & Express", "MongoDB", "Deployment"],
+                image: "💻"
+            },
+            {
+                id: 2,
+                title: "Data Science & Machine Learning",
+                price: 79,
+                instructor: "Dr. Sarah Johnson",
+                description: "Learn Python, Pandas, NumPy, Scikit-learn, TensorFlow and build production-ready ML models.",
+                lessons: ["Python for Data Science", "Data Visualization", "Machine Learning Algorithms", "Deep Learning", "Model Deployment"],
+                image: "📊"
+            },
+            {
+                id: 3,
+                title: "Digital Marketing Mastery",
+                price: 39,
+                instructor: "Mike Chen",
+                description: "SEO, Social Media, Email Marketing, PPC, Analytics - everything you need to grow your online business.",
+                lessons: ["SEO Fundamentals", "Social Media Marketing", "Google Ads", "Email Marketing", "Analytics"],
+                image: "📈"
+            },
+            {
+                id: 4,
+                title: "UI/UX Design Professional",
+                price: 59,
+                instructor: "Emily Davis",
+                description: "Figma, Adobe XD, User Research, Prototyping, Design Systems - create stunning user experiences.",
+                lessons: ["Design Principles", "Figma Mastery", "User Research", "Prototyping", "Design Systems"],
+                image: "🎨"
+            }
+        ];
+
+        let currentUser = null;
+        let purchasedCourses = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+            setupEventListeners();
+        });
+
+        function renderCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            coursesGrid.innerHTML = courses.map(course => `
+                <div class="course-card" onclick="openCourseModal(${course.id})">
+                    <div class="course-image">${course.image}</div>
+                    <div class="course-content">
+                        <h3 class="course-title">${course.title}</h3>
+                        <p style="color: #666; margin-bottom: 1rem;">by ${course.instructor}</p>
+                        <div class="course-price">$${course.price}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openCourseModal(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            if (!course) return;
+
+            document.getElementById('modalCourseTitle').textContent = course.title;
+            document.getElementById('modalCoursePrice').textContent = `$${course.price}`;
+            document.getElementById('modalPriceValue').textContent = course.price;
+            document.getElementById('modalInstructor').textContent = `Instructor: ${course.instructor}`;
+            document.getElementById('modalCourseDescription').textContent = course.description;
+            
+            const lessonsHtml = course.lessons.map(lesson => `<li style="margin-bottom: 0.5rem;">${lesson}</li>`).join('');
+            document.getElementById('modalCourseLessons').innerHTML = `<strong>What's Included (${course.lessons.length} lessons):</strong><ul style="margin-top: 1rem;">${lessonsHtml}</ul>`;
+            
+            document.getElementById('courseModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+        }
+
+        function purchaseCourse() {
+            if (!currentUser) {
+                alert('Please login or register first!');
+                closeModal();
+                showLogin();
+                return;
+            }
+
+            const price = parseInt(document.getElementById('modalPriceValue').textContent);
+            // Simulate payment
+            setTimeout(() => {
+                purchasedCourses.push({
+                    id: courses.find(c => c.title === document.getElementBy
